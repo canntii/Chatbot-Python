@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse
 
 import os
 from dotenv import load_dotenv
+from starlette.websockets import WebSocketDisconnect
 
 load_dotenv()
 
@@ -56,6 +57,8 @@ async def chat(websocket:WebSocket):
                     await websocket.send_text(chunk.choices[0].delta.content)
             chatResponse.append(aiResponse)
 
+        except WebSocketDisconnect:
+            print("Cliente desconectado")
         except Exception as e:
             await websocket.send_text(f'Error: {str(e)}')
             break

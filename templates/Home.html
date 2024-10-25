@@ -35,7 +35,16 @@
 </div>
 
 <script>
-  var ws = new WebSocket("ws://localhost:8000/ws");
+
+  var websocketString = '';
+  if (window.location.hostname === '127.0.0.1') {
+    websocketString = "ws://localhost:8000/ws";
+  } else {
+    websocketString=`wss://${window.location.hostname}/ws`
+  }
+
+  var ws = new WebSocket(websocketString);
+
   var sendButton = document.getElementById("sendButton");
   var userInput = document.getElementById("userInput");
   var chatHistory = document.getElementById("chatHistory");
@@ -51,19 +60,17 @@
       var noPrependSpaceChars = [',', '.', '!', '?', ';', ':', "'"];
 
       if (noPrependSpaceChars.includes(message.charAt(0))) {
-        shouldAddSpace = false;
+          shouldAddSpace = false;
       }
 
       lastUserMessageDiv.textContent += (shouldAddSpace ? " " : "") + message;
     } else {
-      // Create a new message div for the AI response and add it to chat history
+      // It's either a new user input or the first chunk of AI response for the latest input
       var messageDiv = document.createElement("div");
       messageDiv.className = "chat-message ai-response"; // Assign class for styling
       messageDiv.textContent = message;
-      chatHistory.appendChild(messageDiv); // Append message to chat history
-      chatHistory.scrollTop = chatHistory.scrollHeight; // Scroll to the bottom
-
-      lastUserMessageDiv = messageDiv; // Update the reference to the last message
+      chatHistory.appendChild(messageDiv);
+      lastUserMessageDiv = messageDiv; // Update the reference to the last message div
       isNewUserInput = false; // Reset the flag as the AI response starts
     }
   };
@@ -72,15 +79,16 @@
     var message = userInput.value.trim();
     if (message) {
       var userInputDiv = document.createElement("div");
-      userInputDiv.className = "chat-message user-input"; // Use user-input class for styling
+      userInputDiv.className = "chat-message user-input"; // Use user-input class for user messages
       userInputDiv.textContent = message;
       chatHistory.appendChild(userInputDiv);
 
       chatHistory.scrollTop = chatHistory.scrollHeight;
 
-      ws.send(message); // Send the message via WebSocket
-      userInput.value = ""; // Clear input field after sending
-      isNewUserInput = true;
+      ws.send(message);
+      userInput.value = "";
+      isNewUserInput = true; // Set the flag as it's a new user input
+      lastUserMessageDiv = null; // Prepare for the next message
     }
   };
 </script>
