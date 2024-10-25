@@ -20,11 +20,8 @@ openai = OpenAI(
 )
 
 chatLog = [{'role': 'system',
-            'content' : 'You tell jokes.'
+            'content' : 'You are Robert Greene'
             }]
-
-
-
 
 
 @app.get("/", response_class=HTMLResponse)

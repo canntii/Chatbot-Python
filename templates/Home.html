@@ -1,9 +1,9 @@
-{%include 'layout.html' %}
+{%include 'Layout.html' %}
 
 <div class="container mt-5">
 
   <h3>
-    Add input to chat with personal chatbot
+    Ask for advice
   </h3>
 
   <div>
@@ -15,7 +15,7 @@
         <!-- auto populate here -->
         {% for response in chatResponse %}
 
-        <div class="{{'chat-message user-input' if loop.index0 is even else 'chat-message ai-response' }}">
+        <div class="{{'chat'}}">
           {{ response }}
         </div>
 
@@ -35,19 +35,7 @@
 </div>
 
 <script>
-
-  var websocketString = '';
-
-  if(window.location.hostname === '127.0.0.1'){
-    websocketString = "ws://localhost:8000/ws"
-  } else{
-    websocketString = `wss://${window.location.hostname}/ws`
-  }
-
-
-  var ws = new WebSocket(websocketString);
-
-
+  var ws = new WebSocket("ws://localhost:8000/ws");
   var sendButton = document.getElementById("sendButton");
   var userInput = document.getElementById("userInput");
   var chatHistory = document.getElementById("chatHistory");
